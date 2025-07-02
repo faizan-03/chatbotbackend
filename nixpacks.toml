@@ -1,11 +1,17 @@
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip"]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.wheel"]
 
 [phases.install]
-cmds = ["pip install --break-system-packages -r requirements.txt"]
+cmds = [
+  "pip install --no-cache-dir --break-system-packages -r requirements.txt"
+]
 
 [phases.build]
-cmds = ["echo 'Build complete'"]
+cmds = ["python -c 'import app; print(\"Build verification complete\")'"]
 
 [start]
 cmd = "python run.py"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"

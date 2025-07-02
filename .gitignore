@@ -97,10 +97,16 @@ celerybeat.pid
 
 # Environments
 .env
+.env.example
+.env.*
+.environment
+environment
 .env.local
 .env.development
 .env.test
 .env.production
+.env.staging
+.env.backup
 .venv
 env/
 venv/
