@@ -16,21 +16,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for frontend access using settings
-# More permissive CORS for mobile apps and development
-cors_origins = settings.cors_origins.copy()
-if settings.debug:
-    # In debug mode, be more permissive for mobile apps
-    cors_origins.extend(["*"])
-
+# Simple CORS configuration for local development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.debug else cors_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=86400
 )
 
 # Request schema for chatbot queries
@@ -42,47 +34,10 @@ class QuestionRequest(BaseModel):
 def root():
     return {"message": "🎓 University Chatbot API is live!"}
 
-# Health check endpoint for Railway
+# Simple health check endpoint
 @app.get("/health")
 def health_check():
-    return {
-        "status": "healthy",
-        "message": "University Chatbot API is running",
-        "environment": settings.environment,
-        "debug": settings.debug
-    }
-
-# Advanced health check with database connectivity
-@app.get("/health/detailed")
-def detailed_health_check():
-    try:
-        from .utils.db import client
-        if client is None:
-            return {
-                "status": "unhealthy",
-                "message": "Database connection failed",
-                "database": "disconnected",
-                "error": "MongoDB client is None",
-                "environment": settings.environment
-            }
-        
-        # Test MongoDB connection
-        client.admin.command('ping')
-        return {
-            "status": "healthy",
-            "message": "University Chatbot API is running",
-            "database": "connected",
-            "environment": settings.environment,
-            "debug": settings.debug
-        }
-    except Exception as e:
-        return {
-            "status": "unhealthy",
-            "message": "Database connection failed",
-            "database": "disconnected",
-            "error": str(e),
-            "environment": settings.environment
-        }
+    return {"status": "healthy", "message": "API is running"}
 
 # Chatbot interaction route
 @app.post("/query")
